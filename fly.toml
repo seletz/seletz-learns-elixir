@@ -1,0 +1,49 @@
+# fly.toml app configuration file generated for seletz-learns-elixir on 2023-09-19T08:42:53+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "seletz-learns-elixir"
+primary_region = "ams"
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+
+[experimental]
+  auto_rollback = true
+
+[env]
+  ELIXIR_ERL_OPTIONS = "-proto_dist inet6_tcp"
+  LIVEBOOK_APP_SERVICE_NAME = "Fly.io - seletz-learns-elixir"
+  LIVEBOOK_APP_SERVICE_URL = "https://fly.io/apps/seletz-learns-elixir"
+  LIVEBOOK_DATA_PATH = "/data"
+  LIVEBOOK_HOME = "/data"
+  LIVEBOOK_IP = "::"
+  LIVEBOOK_ROOT_PATH = "/data"
+  LIVEBOOK_UPDATE_INSTRUCTIONS_URL = "https://fly.io/apps/seletz-learns-elixir"
+  PORT = "8080"
+
+[[mounts]]
+  source = "livebook_data"
+  destination = "/data"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 8080
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "1s"
